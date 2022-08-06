@@ -21,6 +21,12 @@ public class EmployeeController {
     @Autowired
     private IEmployeeService employeeService;
 
+    /**
+     * 登录
+     * @param employee
+     * @param session
+     * @return
+     */
     @PostMapping("/login")
     public R<Employee> login(@RequestBody Employee employee, HttpSession session){
         String password = employee.getPassword();
@@ -45,6 +51,11 @@ public class EmployeeController {
         return  R.success(emp);
     }
 
+    /**
+     * 退出登录
+     * @param session
+     * @return
+     */
     @PostMapping("/logout")
     public R<String> logout(HttpSession session)
     {
@@ -52,15 +63,15 @@ public class EmployeeController {
         return R.success("退出成功");
     }
 
+    /**
+     * 添加员工
+     * @param session
+     * @param employee
+     * @return
+     */
     @PostMapping
     public R<String> save(HttpSession session,@RequestBody Employee employee){
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        Long empId = (Long) session.getAttribute("employee");
-        employee.setCreateUser(empId);
-        employee.setUpdateUser(empId);
-
         LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<Employee>();
         wrapper.eq(Employee::getUsername,employee.getUsername());
         Employee one = employeeService.getOne(wrapper);
@@ -79,11 +90,15 @@ public class EmployeeController {
     }
 
 
-
-
-
+    /**
+     * 员工分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
-    public R<Page> zhanshi(Integer page, Integer pageSize, String name){
+    public R<Page> page(Integer page, Integer pageSize, String name){
         Page<Employee> page1=new Page<>(page,pageSize);
         LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(StringUtils.hasText(name),Employee::getName,name);
@@ -91,5 +106,25 @@ public class EmployeeController {
         employeeService.page(page1,wrapper);
         System.out.println(page1);
         return R.success(page1);
+    }
+
+    @PutMapping
+    public R<String> update(@RequestBody Employee employee,HttpSession session){
+        boolean b = employeeService.updateById(employee);
+        if(b)
+        {
+            return R.success("员工信息修改成功");
+        }
+        else{
+            return R.error("员工信息修改失败");
+        }
+    }
+    @GetMapping("/{id}")
+    public R<Employee> getEmployee(@PathVariable("id")Long id){
+        Employee employee = employeeService.getById(id);
+        if(employee!=null){
+            return R.success(employee);
+        }
+        return R.error("error");
     }
 }

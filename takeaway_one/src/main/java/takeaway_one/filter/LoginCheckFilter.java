@@ -3,6 +3,7 @@ package takeaway_one.filter;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
+import takeaway_one.common.BaseContext;
 import takeaway_one.common.R;
 
 import javax.servlet.*;
@@ -38,7 +39,9 @@ public class LoginCheckFilter implements Filter {
 
         //4、判断登录状态，如果已登录，则直接放行
         if(request1.getSession().getAttribute("employee") != null){
-            log.info("用户已登录，用户id为：{}",request1.getSession().getAttribute("employee"));
+            Long employeeId = (Long)request1.getSession().getAttribute("employee");
+            log.info("用户已登录，用户id为：{}",employeeId);
+            BaseContext.setCurrentId(employeeId);
             chain.doFilter(request,response);
             return;
         }
