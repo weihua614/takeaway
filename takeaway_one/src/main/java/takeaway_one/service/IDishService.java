@@ -6,4 +6,8 @@ import takeaway_one.pojo.Dish;
 
 public interface IDishService extends IService<Dish> {
     public void saveWithFlavor(DishDto dishDto);
+
+    public DishDto getDishDtoById(Long id);
+
+    public void updateWithFlavor(DishDto dishDto);
 }

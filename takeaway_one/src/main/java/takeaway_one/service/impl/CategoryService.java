@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import takeaway_one.common.CustomException;
 import takeaway_one.mapper.CategoryMapper;
 import takeaway_one.pojo.Category;
@@ -22,6 +23,7 @@ public class CategoryService extends ServiceImpl<CategoryMapper, Category> imple
     private ISetmealService setmealService;
 
     @Override
+    @Transactional
     public void remove(Long id){
         LambdaQueryWrapper<Dish> dishLambdaQueryWrapper = new LambdaQueryWrapper<>();
         dishLambdaQueryWrapper.eq(Dish::getCategoryId,id);
